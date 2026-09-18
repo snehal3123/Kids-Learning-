@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Alphabet Hunt - Kids Learning Activity</title>
+    <!-- Google Fonts for playful kid-friendly look -->
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper-bg: #fffefb;
+            --line-color: #e2f0fb;
+            --card-border: #4a90e2;
+        }
+
+        * {
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family: 'Comic Neue', cursive, sans-serif;
+            background: url('https://i.pinimg.com/736x/d8/18/0b/d8180be4b01572b73e643e82152a0b0e.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating background stickers */
+        .bg-sticker {
+            position: absolute;
+            font-size: 2.2rem;
+            opacity: 0.9;
+            z-index: 1;
+            animation: floatSticker 4s ease-in-out infinite alternate;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        @keyframes floatSticker {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-12px) rotate(8deg); }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(4px);
+        }
+
+        header h1 {
+            font-family: 'Fredoka One', cursive;
+            color: #ff3366;
+            font-size: 2rem;
+            margin-bottom: 2px;
+            text-shadow: 2px 2px 0px #fff;
+        }
+
+        header p {
+            font-family: 'Fredoka One', cursive;
+            color: #2b6cb0;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        /* Audio Control Bar */
+        .audio-bar {
+            margin-bottom: 10px;
+            z-index: 10;
+        }
+
+        .music-btn {
+            font-family: 'Fredoka One', cursive;
+            background: #ff6b6b;
+            color: white;
+            border: 3px solid #fff;
+            padding: 6px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+
+        .music-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Alphabet Navigation Bar */
+        .alphabet-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            max-width: 680px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            backdrop-filter: blur(5px);
+            z-index: 10;
+            border: 3px solid #fff;
+        }
+
+        .letter-btn {
+            font-family: 'Fredoka One', cursive;
+            background-color: #fff;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            width: 33px;
+            height: 33px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #4b5563;
+            box-shadow: 0 3px 0 #cbd5e1;
+        }
+
+        .letter-btn:hover {
+            background-color: #e0f2fe;
+            border-color: #38bdf8;
+            transform: translateY(-2px);
+        }
+
+        .letter-btn.active {
+            background-color: #ff6b6b;
+            color: white;
+            border-color: #fa5252;
+            box-shadow: 0 3px 0 #c92a2a;
+            transform: translateY(-2px);
+        }
+
+        .letter-btn.completed {
+            background-color: #51cf66;
+            color: white;
+            border-color: #40c057;
+            box-shadow: 0 3px 0 #2b8a3e;
+        }
+
+        /* Main Workspace Container */
+        .workspace {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 540px;
+            z-index: 10;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* Clipboard Wrapper */
+        .clipboard-container {
+            position: relative;
+            background-color: #d97706; 
+            padding: 25px 15px 15px 15px;
+            border-radius: 22px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            width: 100%;
+            box-sizing: border-box;
+            border: 4px solid #b45309;
+        }
+
+        .clip-top {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 130px;
+            height: 40px;
+            background: linear-gradient(to bottom, #f3f4f6, #9ca3af);
+            border-radius: 8px;
+            box-shadow: 0 5px 8px rgba(0,0,0,0.3);
+            z-index: 10;
+            border: 2px solid #4b5563;
+        }
+        .clip-top::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 20px;
+            background: #374151;
+            border-radius: 4px;
+        }
+        .clip-circle {
+            position: absolute;
+            top: 13px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            background: #111827;
+            border-radius: 50%;
+            z-index: 11;
+        }
+
+        /* Paper Sheet */
+        .paper {
+            background-color: var(--paper-bg);
+            background-image: repeating-linear-gradient(var(--paper-bg) 0px, var(--paper-bg) 25px, var(--line-color) 26px);
+            border-radius: 8px;
+            padding: 20px 15px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid #fef08a;
+        }
+
+        .paper-title {
+            font-family: 'Fredoka One', cursive;
+            color: #3b82f6;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            margin: 0;
+            text-shadow: 2px 2px 0px #bfdbfe;
+            text-align: center;
+        }
+
+        .paper-subtitle {
+            font-family: 'Fredoka One', cursive;
+            color: #f97316;
+            font-size: 1.15rem;
+            margin: 2px 0 10px 0;
+            text-align: center;
+        }
+
+        .instruction-box {
+            background: #fef3c7;
+            border: 2px dashed #f59e0b;
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-family: 'Fredoka One', cursive;
+            color: #b45309;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            text-align: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.03);
+        }
+
+        .target-letter-display {
+            font-family: 'Fredoka One', cursive;
+            font-size: 3rem;
+            color: #ef4444;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 12px;
+            align-items: baseline;
+            text-shadow: 2px 2px 0px #fca5a5;
+        }
+
+        .target-letter-display span {
+            background: white;
+            padding: 0 12px;
+            border-radius: 12px;
+            border: 3px solid #fecaca;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        /* 3 Card Slots */
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+        }
+
+        .card-slot {
+            aspect-ratio: 1;
+            border: 3px dashed var(--card-border);
+            background-color: rgba(239, 246, 255, 0.8);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .card-slot.drag-over {
+            background-color: #dbeafe;
+            border-color: #2563eb;
+            transform: scale(1.05);
+        }
+
+        .card-slot img {
+            width: 88%;
+            height: 88%;
+            object-fit: contain;
+            border-radius: 10px;
+            animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: white;
+            padding: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Tray Container */
+        .tray-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border: 3px solid #fff;
+        }
+
+        .tray-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.1rem;
+            color: #4b5563;
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .flashcards-tray {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .flashcard {
+            background: white;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 6px;
+            text-align: center;
+            cursor: grab;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            user-select: none;
+            touch-action: none;
+            position: relative;
+        }
+
+        .flashcard:active {
+            cursor: grabbing;
+        }
+
+        .flashcard img {
+            width: 100%;
+            height: 55px;
+            object-fit: contain;
+            border-radius: 6px;
+            background: #f8fafc;
+            pointer-events: none;
+            transition: transform 0.3s ease;
+        }
+
+        .flashcard span {
+            display: block;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.8rem;
+            color: #1e293b;
+            margin-top: 3px;
+            pointer-events: none;
+        }
+
+        /* Click to Zoom Styling */
+        .flashcard.zoomed {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(2.3);
+            z-index: 2000;
+            background: white;
+            box-shadow: 0 0 40px rgba(0,0,0,0.3);
+            border: 3px solid #ff6b6b;
+            cursor: pointer;
+        }
+
+        #zoom-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: transparent; /* Changed from semi-transparent black to transparent! */
+            z-index: 1999;
+            /* backdrop-filter removed so there's no blur or shadow effect */
+        }
+        #zoom-overlay.active {
+            display: block;
+        }
+        
+        /* Floating Active Drag Element */
+        .dragging-ghost {
+            position: fixed;
+            z-index: 2000;
+            pointer-events: none;
+            width: 85px;
+            background: white;
+            border: 3px solid #3b82f6;
+            border-radius: 12px;
+            padding: 6px;
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        .dragging-ghost img {
+            width: 100%;
+            height: 55px;
+            object-fit: contain;
+        }
+        .dragging-ghost span {
+            display: block;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.8rem;
+            color: #1e293b;
+            margin-top: 2px;
+        }
+
+        /* Hurray Sparking Celebration Modal */
+        #celebration-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 1500;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .celebration-card {
+            background: white;
+            padding: 30px 45px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 6px solid #ff6b6b;
+            animation: bounceCelebration 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 380px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .celebration-card h2 {
+            font-family: 'Fredoka One', cursive;
+            color: #ff3366;
+            font-size: 2.5rem;
+            margin: 0 0 8px 0;
+            animation: colorGlow 1s infinite alternate;
+        }
+
+        .celebration-card p {
+            font-family: 'Fredoka One', cursive;
+            color: #2b6cb0;
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        @keyframes colorGlow {
+            from { text-shadow: 0 0 5px #ff6b6b; }
+            to { text-shadow: 0 0 20px #ff3366, 0 0 30px #ffed4a; }
+        }
+
+        .sparkle {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: sparkleAnim 1s linear infinite;
+        }
+        @keyframes sparkleAnim {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1.3) rotate(180deg); opacity: 1; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        /* Error Floating Banner */
+        #error-banner {
+            display: none;
+            position: fixed;
+            top: 20px;
+            background: #ff4757;
+            color: white;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.1rem;
+            box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+            z-index: 1600;
+            border: 3px solid #fff;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes bounceCelebration {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            .flashcards-tray { grid-template-columns: repeat(2, 1fr); }
+            .paper-title { font-size: 1.7rem; }
+            .target-letter-display { font-size: 2.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background stickers -->
+    <div class="bg-sticker" style="top: 5%; left: 6%;">⭐</div>
+    <div class="bg-sticker" style="top: 12%; right: 8%;">🎈</div>
+    <div class="bg-sticker" style="top: 78%; left: 4%;">🚀</div>
+    <div class="bg-sticker" style="top: 82%; right: 6%;">🎨</div>
+
+    <!-- Error Popup / Banner -->
+    <div id="error-banner">😿 Ohh ho! Try again, little buddy! 💡</div>
+
+    <!-- Zoom overlay background -->
+    <div id="zoom-overlay" onclick="closeZoom()"></div>
+
+    <!-- Celebration Modal -->
+    <div id="celebration-overlay">
+        <div class="celebration-card" id="celebrationCard">
+            <div class="sparkle" style="top: 10px; left: 20px;">✨</div>
+            <div class="sparkle" style="top: 20px; right: 25px; animation-delay: 0.3s;">🌟</div>
+            <div class="sparkle" style="bottom: 15px; left: 30px; animation-delay: 0.6s;">💫</div>
+            <div class="sparkle" style="bottom: 20px; right: 30px; animation-delay: 0.2s;">⭐</div>
+            <h2>🎉 HURRAY! 🌟</h2>
+            <p id="celebration-text">Amazing job! Moving to next letter...</p>
+        </div>
+    </div>
+
+    <header>
+        <h1>Alphabet Hunt!</h1>
+        <p>Find the 3 correct cards and drag them in! 🎒✨</p>
+    </header>
+
+    <!-- Audio toggle button -->
+    <div class="audio-bar">
+        <button class="music-btn" id="musicToggleBtn" onclick="toggleBackgroundMusic()">🔇 Stop Music</button>
+    </div>
+
+    <!-- Alphabet Navigation Bar (Restored Here!) -->
+    <div class="alphabet-nav" id="alphabetNav"></div>
+
+    <!-- Main Workspace -->
+    <div class="workspace">
+        <!-- Clipboard & Activity Paper Component -->
+        <div class="clipboard-container">
+            <div class="clip-top">
+                <div class="clip-circle"></div>
+            </div>
+
+            <div class="paper">
+                <h2 class="paper-title">ALPHABET HUNT</h2>
+                <div class="paper-subtitle">Find the 3 hidden cards</div>
+                <div class="instruction-box">
+                    Drag cards starting with letter <span id="currentLetterLabel" style="font-size: 1.1rem; color: #dc2626;">A</span> below!
+                </div>
+
+                <!-- Target Letter Display -->
+                <div class="target-letter-display">
+                    <span id="upperTarget">A</span>
+                    <span id="lowerTarget">a</span>
+                </div>
+
+                <!-- Exactly 3 Blank Target Card Slots -->
+                <div class="slots-grid" id="slotsGrid"></div>
+            </div>
+        </div>
+
+        <!-- Source Flashcards Tray -->
+        <div class="tray-container">
+            <h3 class="tray-title">📦 Flashcard Tray (Click to zoom or drag!)</h3>
+            <div class="flashcards-tray" id="flashcardsTray"></div>
+        </div>
+    </div>
+
+<script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            let now = audioCtx.currentTime;
+
+            if (type === 'drag') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(350, now);
+                osc.frequency.exponentialRampToValueAtTime(550, now + 0.06);
+                gainNode.gain.setValueAtTime(0.1, now);
+                gainNode.gain.linearRampToValueAtTime(0.01, now + 0.06);
+                osc.start(now);
+                osc.stop(now + 0.06);
+            } else if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.1);
+                osc.frequency.setValueAtTime(783.99, now + 0.2);
+                osc.frequency.setValueAtTime(1046.50, now + 0.3);
+                osc.frequency.setValueAtTime(1318.51, now + 0.4);
+                gainNode.gain.setValueAtTime(0.25, now);
+                gainNode.gain.linearRampToValueAtTime(0.01, now + 0.6);
+                osc.start(now);
+                osc.stop(now + 0.6);
+            } else if (type === 'incorrect') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(280, now);
+                osc.frequency.linearRampToValueAtTime(160, now + 0.3);
+                gainNode.gain.setValueAtTime(0.12, now);
+                gainNode.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+        }
+
+        // Music Plays by Default on load
+        let musicPlaying = true;
+        let musicTimer = null;
+
+        function startBackgroundMusic() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const notes = [261.63, 329.63, 392.00, 523.25];
+            let index = 0;
+            musicTimer = setInterval(() => {
+                if (!musicPlaying) return;
+                let osc = audioCtx.createOscillator();
+                let g = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(notes[index % notes.length], audioCtx.currentTime);
+                g.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                g.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+                osc.connect(g);
+                g.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+                index++;
+            }, 600);
+        }
+
+        function toggleBackgroundMusic() {
+            const btn = document.getElementById('musicToggleBtn');
+            if (musicPlaying) {
+                musicPlaying = false;
+                btn.innerText = "🎵 Play Fun Music";
+                if (musicTimer) clearInterval(musicTimer);
+            } else {
+                musicPlaying = true;
+                btn.innerText = "🔇 Stop Music";
+                startBackgroundMusic();
+            }
+        }
+
+        window.addEventListener('load', () => {
+            startBackgroundMusic();
+        });
+
+        // Full A to Z Database
+        const alphabetData = {
+            'A': [
+                { name: 'Apple', img: 'https://i.pinimg.com/736x/4a/96/c2/4a96c21539ce2d8eae13f9f5bd6e6e58.jpg' },
+                { name: 'Alligator', img: 'https://i.pinimg.com/1200x/b0/3d/a1/b03da123a86c73232e5950f9ac93a6be.jpg' },
+                { name: 'Airplane', img: 'https://i.pinimg.com/736x/30/c2/b5/30c2b558205987ac9738de92ed166bc3.jpg' }
+            ],
+            'B': [
+                { name: 'Banana', img: 'https://i.pinimg.com/1200x/15/b8/7b/15b87bf576c79d3781d848d7189872f5.jpg' },
+                { name: 'Bear', img: 'https://i.pinimg.com/1200x/11/68/58/116858fcc9e336058fa42a703c8bbfdb.jpg' },
+                { name: 'Ball', img: 'https://i.pinimg.com/1200x/2e/06/ce/2e06ce54e8a2dc7746e154173c94f09f.jpg' }
+            ],
+            'C': [
+                { name: 'Cat', img: 'https://i.pinimg.com/736x/87/e2/f0/87e2f0e3ab3a2f719da1ee3db638d71e.jpg' },
+                { name: 'Cow', img: 'https://i.pinimg.com/736x/aa/30/37/aa30375ef429aa9b1539cc960c7973e6.jpg' },
+                { name: 'Cup', img: 'https://i.pinimg.com/1200x/34/50/cf/3450cf3a858fdd656aaf413f3a58c506.jpg' }
+            ],
+            'D': [
+                { name: 'Dog', img: 'https://i.pinimg.com/736x/f6/a5/c4/f6a5c4105c36c288108a1981c4f83ad3.jpg' },
+                { name: 'Duck', img: 'https://i.pinimg.com/736x/60/87/11/608711d2571a4d878cb654fd7e501d6d.jpg' },
+                { name: 'Drum', img: 'https://i.pinimg.com/736x/4f/96/f4/4f96f4cc76d851f99c99c78078c90e99.jpg' }
+            ],
+            'E': [
+                { name: 'Elephant', img: 'https://i.pinimg.com/1200x/c3/df/63/c3df63ffd3c259796906e82236a671b5.jpg' },
+                { name: 'Egg', img: 'https://i.pinimg.com/1200x/6c/be/2b/6cbe2b3b263a3ce0cc9b9d34e991aacf.jpg' },
+                { name: 'Earth', img: 'https://i.pinimg.com/736x/d8/46/99/d84699c796b12d91f678db68c7b995f3.jpg' }
+            ],
+            'F': [
+                { name: 'Fish', img: 'https://i.pinimg.com/736x/6d/02/a6/6d02a60cf3d8ea55bf20de0fbb98156a.jpg' },
+                { name: 'Frog', img: 'https://i.pinimg.com/736x/aa/38/dc/aa38dcd66276ca1ac2116c05b430a45a.jpg' },
+                { name: 'Flower', img: 'https://i.pinimg.com/736x/9f/12/1f/9f121f00e65ae5c0346110c8c11aeb92.jpg' }
+            ],
+            'G': [
+                { name: 'Giraffe', img: 'https://i.pinimg.com/736x/79/80/e8/7980e8e9fbd3f557b9a596312605fa25.jpg' },
+                { name: 'Grapes', img: 'https://i.pinimg.com/736x/c0/16/26/c016264ca5c0bf06b172bd120b150e30.jpg' },
+                { name: 'Guitar', img: 'https://i.pinimg.com/1200x/a2/e3/1c/a2e31c0c44f80518ca5d99ac8a8e6cbe.jpg' }
+            ],
+            'H': [
+                { name: 'Horse', img: 'https://i.pinimg.com/736x/cc/e3/19/cce319ae1c39cbd4a0a94e5ad3205a6b.jpg' },
+                { name: 'House', img: 'https://i.pinimg.com/1200x/e7/dd/ad/e7ddad77eda6154a880e0fe9f8c9d49b.jpg' },
+                { name: 'Hat', img: 'https://i.pinimg.com/736x/d4/f6/3a/d4f63aea81cccc1f68b239fb0fb6ceb5.jpg' }
+            ],
+            'I': [
+                { name: 'Ice', img: 'https://i.pinimg.com/1200x/24/03/03/240303f3d78d01d3d7862936ce165f0a.jpg' },
+                { name: 'Icecream', img: 'https://i.pinimg.com/1200x/3d/06/93/3d0693f3c92e29162391226b8f6bab7b.jpg' },
+                { name: 'Insect', img: 'https://i.pinimg.com/736x/5b/97/dd/5b97dd1433c7f11858c9447b3463b207.jpg' }
+            ],
+            'J': [
+                { name: 'Jaguar', img: 'https://i.pinimg.com/1200x/54/5a/c4/545ac4c8772dcb5689120d64ce48c8d5.jpg' },
+                { name: 'Jellyfish', img: 'https://i.pinimg.com/1200x/a1/01/26/a10126f83465d7158f55e1391412203f.jpg' },
+                { name: 'Jug', img: 'https://i.pinimg.com/736x/7b/24/95/7b24953d124948c8503d990f1f16368c.jpg' }
+            ],
+            'K': [
+                { name: 'Kangaroo', img: 'https://i.pinimg.com/736x/b7/4a/c9/b74ac9b398fc5ae546fdfe853708e8fb.jpg' },
+                { name: 'Key', img: 'https://i.pinimg.com/736x/74/a5/78/74a57821368addc076f99cda448de7ec.jpg' },
+                { name: 'Kite', img: 'https://i.pinimg.com/736x/98/39/69/983969f813c3b54c7c2db64ca4669b68.jpg' }
+            ],
+            'L': [
+                { name: 'Lion', img: 'https://i.pinimg.com/1200x/ac/42/1c/ac421cca69b8cff7eafc983b26c279e2.jpg' },
+                { name: 'Lamp', img: 'https://i.pinimg.com/1200x/ef/a7/93/efa79381c3723f511715bdd7c70ce613.jpg' },
+                { name: 'Leaf', img: 'https://i.pinimg.com/736x/ed/06/6d/ed066d64e9f6b04730fb5524096acef2.jpg' }
+            ],
+            'M': [
+                { name: 'Monkey', img: 'https://i.pinimg.com/736x/2f/23/5c/2f235c6cb359b73df385d483c79aa0b9.jpg' },
+                { name: 'Mouse', img: 'https://i.pinimg.com/736x/47/cc/89/47cc892fd13b532d10d37f1c09ab60e0.jpg' },
+                { name: 'Moon', img: 'https://i.pinimg.com/736x/96/48/73/964873064d7c2511e428c4facae19bde.jpg' }
+            ],
+            'N': [
+                { name: 'Nest', img: 'https://i.pinimg.com/736x/7e/48/98/7e489823c0b3c7bff2ebbf27678c236d.jpg' },
+                { name: 'Napkin', img: 'https://i.pinimg.com/736x/ae/48/ad/ae48ad11e9fa24e8f20ebb484ce5b33e.jpg' },
+                { name: 'Net', img: 'https://i.pinimg.com/736x/fb/05/84/fb0584412b49a0a35e0f929d863dd79c.jpg' }
+            ],
+            'O': [
+                { name: 'Owl', img: 'https://i.pinimg.com/736x/b3/2f/a1/b32fa17bab48831bdc70a480d3dd022f.jpg' },
+                { name: 'Orange', img: 'https://i.pinimg.com/1200x/06/91/0e/06910e30bdd4d8ccc31ba68b5c92196d.jpg' },
+                { name: 'Onion', img: 'https://i.pinimg.com/1200x/fb/19/6f/fb196f892b4642aba2d99975faac9420.jpg' }
+            ],
+            'P': [
+                { name: 'Penguin', img: 'https://i.pinimg.com/736x/a6/8b/33/a68b33352b77d034383a94bd044a304b.jpg' },
+                { name: 'Pencil', img: 'https://i.pinimg.com/736x/ce/35/0b/ce350b0ba2e89fc1ccfb5fc6dcd4953f.jpg' },
+                { name: 'Pizza', img: 'https://i.pinimg.com/736x/95/9d/07/959d075f1d43263e53f1bbff0dee4baf.jpg' }
+            ],
+            'Q': [
+                { name: 'Queen', img: 'https://i.pinimg.com/1200x/3d/cf/23/3dcf23dcdee96240748c1fb0806937db.jpg' },
+                { name: 'Quilt', img: 'https://i.pinimg.com/736x/c1/48/0c/c1480c873b51c6b2f0e781c793099c52.jpg' },
+                { name: 'Quail', img: 'https://i.pinimg.com/1200x/64/71/d9/6471d993e3ae4a00b54c73e627db2bb9.jpg' }
+            ],
+            'R': [
+                { name: 'Rabbit', img: 'https://i.pinimg.com/736x/ba/0c/a6/ba0ca64fc059ab728f24e394921f8dd2.jpg' },
+                { name: 'Robot', img: 'https://i.pinimg.com/1200x/a2/0f/9f/a20f9faae396f48c48671fcd74d03963.jpg' },
+                { name: 'Ring', img: 'https://i.pinimg.com/1200x/f7/c7/08/f7c70882c97121ff91f92ac0d87bb4b0.jpg' }
+            ],
+            'S': [
+                { name: 'Sun', img: 'https://i.pinimg.com/736x/54/4d/18/544d189ae85a51c995ec60bf635c8fdd.jpg' },
+                { name: 'Star', img: 'https://i.pinimg.com/1200x/e2/a2/ce/e2a2ce58a46349c818071024833920f2.jpg' },
+                { name: 'Sweater', img: 'https://i.pinimg.com/736x/3c/7d/1e/3c7d1ef292c8e16a64483d092c405edf.jpg' }
+            ],
+            'T': [
+                { name: 'Tiger', img: 'https://i.pinimg.com/1200x/d9/07/ec/d907ec461fbfa0f172a1098a0d9e9324.jpg' },
+                { name: 'Tree', img: 'https://i.pinimg.com/1200x/79/65/c5/7965c53747d4afc2637566ef2724d4d5.jpg' },
+                { name: 'Train', img: 'https://i.pinimg.com/736x/e1/dc/0c/e1dc0cb5d05ce72f1f8d595453408b94.jpg' }
+            ],
+            'U': [
+                { name: 'Umbrella', img: 'https://i.pinimg.com/736x/2a/8b/d4/2a8bd41834fa5ab18a58e9e4c0865faf.jpg' },
+                { name: 'Unicorn', img: 'https://i.pinimg.com/1200x/00/9d/ab/009dab26d1d5c0c9afa5114395cb34c4.jpg' },
+                { name: 'Uniform', img: 'https://i.pinimg.com/736x/58/1f/21/581f218b9162f439df99dd9ac0da918b.jpg' }
+            ],
+            'V': [
+                { name: 'Violin', img: 'https://i.pinimg.com/736x/fe/06/8b/fe068bc9022e84d060881ebaf93bdbc5.jpg' },
+                { name: 'Van', img: 'https://i.pinimg.com/736x/0d/78/6c/0d786c93f8bc18a6b5251e2c9dec4a3c.jpg' },
+                { name: 'Vase', img: 'https://i.pinimg.com/1200x/d3/08/f1/d308f1420da3473766aeaa0da3325c2c.jpg' }
+            ],
+            'W': [
+                { name: 'Whale', img: 'https://i.pinimg.com/1200x/e3/e5/88/e3e588bc4381554d975f29c520ddae37.jpg' },
+                { name: 'Watch', img: 'https://i.pinimg.com/1200x/3e/66/b4/3e66b4425883aba7a64cab574f5a76d0.jpg' },
+                { name: 'Water', img: 'https://i.pinimg.com/1200x/7d/76/4b/7d764b81fa852b53ca74d28aa2cb6765.jpg' }
+            ],
+            'X': [
+                { name: 'Xylophone', img: 'https://i.pinimg.com/736x/f6/f3/77/f6f377056f9b23c06be0b344aa2bf75b.jpg' },
+                { name: 'Xray', img: 'https://i.pinimg.com/736x/98/b0/db/98b0db5d0cb4d059ea745af3a8280d2d.jpg' },
+                { name: 'Xmas', img: 'https://i.pinimg.com/736x/24/ad/5c/24ad5cbc17555481d21c1ecc7518ecc9.jpg' }
+            ],
+            'Y': [
+                { name: 'Yak', img: 'https://i.pinimg.com/736x/c0/5c/75/c05c7545b706065a606399607b49bd6e.jpg' },
+                { name: 'Yoyo', img: 'https://i.pinimg.com/1200x/5b/18/76/5b18768ef3018cdb4070c7bc666c818d.jpg' },
+                { name: 'Yacht', img: 'https://i.pinimg.com/1200x/2f/93/bd/2f93bdbaef1b7386327cdbba80dfbd87.jpg' }
+            ],
+            'Z': [
+                { name: 'Zebra', img: 'https://i.pinimg.com/736x/5f/56/91/5f5691011de48e2b2cbff258d39fe9b0.jpg' },
+                { name: 'Zip', img: 'https://i.pinimg.com/736x/57/fc/00/57fc006bc5c0e1be72e215c37215c50f.jpg' },
+                { name: 'Zoo', img: 'https://i.pinimg.com/1200x/46/24/67/462467f47ff3de8ffdd9e597e1597866.jpg' }
+            ]
+        };
+
+        let currentLetterCode = 65;
+        let letterStates = {};
+        for (let i = 65; i <= 90; i++) {
+            let char = String.fromCharCode(i);
+            let pool = [...alphabetData[char]];
+            pool.sort(() => Math.random() - 0.5);
+            letterStates[char] = {
+                targetCards: pool.slice(0, 3),
+                placedItems: [],
+                completed: false
+            };
+        }
+
+        // Initialize Alphabet Navigation Bar
+        const navContainer = document.getElementById('alphabetNav');
+        for (let i = 65; i <= 90; i++) {
+            let char = String.fromCharCode(i);
+            let btn = document.createElement('button');
+            btn.className = `letter-btn ${i === 65 ? 'active' : ''}`;
+            btn.id = `nav-btn-${char}`;
+            btn.innerText = char;
+            btn.onclick = () => selectLetter(i);
+            navContainer.appendChild(btn);
+        }
+
+        function selectLetter(charCode) {
+            currentLetterCode = charCode;
+            let letter = String.fromCharCode(charCode);
+
+            for (let i = 65; i <= 90; i++) {
+                let c = String.fromCharCode(i);
+                let b = document.getElementById(`nav-btn-${c}`);
+                if(b) {
+                    b.classList.remove('active');
+                    if (i === charCode) b.classList.add('active');
+                }
+            }
+
+            document.getElementById('currentLetterLabel').innerText = letter;
+            document.getElementById('upperTarget').innerText = letter;
+            document.getElementById('lowerTarget').innerText = letter.toLowerCase();
+            
+            loadActivity();
+        }
+
+        let currentlyZoomedCard = null;
+        function toggleZoomCard(cardElement, event) {
+            event.stopPropagation();
+            const overlay = document.getElementById('zoom-overlay');
+
+            if (cardElement.classList.contains('zoomed')) {
+                cardElement.classList.remove('zoomed');
+                overlay.classList.remove('active');
+                currentlyZoomedCard = null;
+            } else {
+                if (currentlyZoomedCard) {
+                    currentlyZoomedCard.classList.remove('zoomed');
+                }
+                cardElement.classList.add('zoomed');
+                overlay.classList.add('active');
+                currentlyZoomedCard = cardElement;
+            }
+        }
+
+        function closeZoom() {
+            if (currentlyZoomedCard) {
+                currentlyZoomedCard.classList.remove('zoomed');
+                document.getElementById('zoom-overlay').classList.remove('active');
+                currentlyZoomedCard = null;
+            }
+        }
+
+        function loadActivity() {
+            closeZoom();
+            let letter = String.fromCharCode(currentLetterCode);
+            let state = letterStates[letter];
+            const slotsGrid = document.getElementById('slotsGrid');
+            slotsGrid.innerHTML = '';
+
+            for (let i = 0; i < 3; i++) {
+                let slot = document.createElement('div');
+                slot.className = 'card-slot';
+                let expectedItem = state.targetCards[i];
+                slot.dataset.expectedName = expectedItem.name;
+
+                let alreadyPlaced = state.placedItems.find(item => item.name === expectedItem.name);
+                if (alreadyPlaced) {
+                    let img = document.createElement('img');
+                    img.src = alreadyPlaced.img;
+                    img.alt = alreadyPlaced.name;
+                    slot.appendChild(img);
+                }
+                slotsGrid.appendChild(slot);
+            }
+
+            let trayContainer = document.getElementById('flashcardsTray');
+            trayContainer.innerHTML = '';
+
+            let distractors = [];
+            let otherLetters = Object.keys(alphabetData).filter(k => k !== letter);
+            otherLetters.sort(() => Math.random() - 0.5);
+            
+            for(let i = 0; i < 1; i++) {
+                let randomLetter = otherLetters[i % otherLetters.length];
+                let randItems = alphabetData[randomLetter];
+                let randomItem = randItems[Math.floor(Math.random() * randItems.length)];
+                if (!distractors.some(d => d.name === randomItem.name) && !state.targetCards.some(t => t.name === randomItem.name)) {
+                    distractors.push(randomItem);
+                } else {
+                    i--;
+                }
+            }
+
+            let mixedTrayItems = [...state.targetCards, ...distractors];
+            mixedTrayItems.sort(() => Math.random() - 0.5);
+
+            mixedTrayItems.forEach(item => {
+                let card = document.createElement('div');
+                card.className = 'flashcard';
+                card.dataset.name = item.name;
+
+                let isAlreadyPlaced = state.placedItems.some(p => p.name === item.name);
+                if (isAlreadyPlaced || state.completed) {
+                    card.style.opacity = '0.3';
+                    card.style.pointerEvents = 'none';
+                }
+
+                card.innerHTML = `
+                    <img src="${item.img}" alt="${item.name}">
+                    <span>${item.name}</span>
+                `;
+
+                card.addEventListener('click', (e) => toggleZoomCard(card, e));
+                initDraggableCard(card, item);
+
+                trayContainer.appendChild(card);
+            });
+        }
+
+        function initDraggableCard(cardElement, item) {
+            let ghost = null;
+            let startX = 0, startY = 0;
+            let hasMoved = false;
+
+            const onPointerDown = (e) => {
+                if (cardElement.style.pointerEvents === 'none') return;
+                hasMoved = false;
+                startX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+                startY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+
+                window.addEventListener('pointermove', onPointerMove);
+                window.addEventListener('pointerup', onPointerUp);
+                window.addEventListener('touchmove', onTouchMove, { passive: false });
+                window.addEventListener('touchend', onPointerUp);
+            };
+
+            const onPointerMove = (e) => {
+                let currentX = e.clientX;
+                let currentY = e.clientY;
+                checkDragMovement(currentX, currentY);
+            };
+
+            const onTouchMove = (e) => {
+                const touch = e.touches[0];
+                checkDragMovement(touch.clientX, touch.clientY);
+                if (hasMoved) e.preventDefault();
+            };
+
+            const checkDragMovement = (x, y) => {
+                let distance = Math.hypot(x - startX, y - startY);
+                if (distance > 8 && !hasMoved) {
+                    hasMoved = true;
+                    if (currentlyZoomedCard) closeZoom();
+                    playSound('drag');
+
+                    ghost = document.createElement('div');
+                    ghost.className = 'dragging-ghost';
+                    ghost.innerHTML = `<img src="${item.img}" alt="${item.name}"><span>${item.name}</span>`;
+                    ghost.style.left = `${x}px`;
+                    ghost.style.top = `${y}px`;
+                    document.body.appendChild(ghost);
+                    cardElement.style.opacity = '0.4';
+                }
+
+                if (hasMoved && ghost) {
+                    ghost.style.left = `${x}px`;
+                    ghost.style.top = `${y}px`;
+
+                    const slots = document.querySelectorAll('.card-slot');
+                    slots.forEach(slot => {
+                        const rect = slot.getBoundingClientRect();
+                        if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+                            slot.classList.add('drag-over');
+                        } else {
+                            slot.classList.remove('drag-over');
+                        }
+                    });
+                }
+            };
+
+            const onPointerUp = (e) => {
+                window.removeEventListener('pointermove', onPointerMove);
+                window.removeEventListener('pointerup', onPointerUp);
+                window.removeEventListener('touchmove', onTouchMove);
+                window.removeEventListener('touchend', onPointerUp);
+
+                cardElement.style.opacity = '1';
+
+                if (ghost) {
+                    const clientX = e.clientX || (e.changedTouches && e.changedTouches.length > 0 ? e.changedTouches[0].clientX : parseInt(ghost.style.left));
+                    const clientY = e.clientY || (e.changedTouches && e.changedTouches.length > 0 ? e.changedTouches[0].clientY : parseInt(ghost.style.top));
+
+                    const slots = document.querySelectorAll('.card-slot');
+                    slots.forEach(slot => {
+                        slot.classList.remove('drag-over');
+                        const rect = slot.getBoundingClientRect();
+                        if (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom) {
+                            handleCardDrop(item, slot, cardElement);
+                        }
+                    });
+
+                    ghost.remove();
+                    ghost = null;
+                }
+            };
+
+            cardElement.addEventListener('pointerdown', onPointerDown);
+        }
+
+        function handleCardDrop(item, slot, cardElement) {
+            let letter = String.fromCharCode(currentLetterCode);
+            let state = letterStates[letter];
+
+            if (slot.querySelector('img')) return;
+
+            let isTarget = state.targetCards.some(t => t.name === item.name);
+
+            if (isTarget) {
+                playSound('correct');
+                state.placedItems.push(item);
+
+                let img = document.createElement('img');
+                img.src = item.img;
+                img.alt = item.name;
+                slot.appendChild(img);
+
+                cardElement.style.opacity = '0.3';
+                cardElement.style.pointerEvents = 'none';
+
+                if (state.placedItems.length === 3) {
+                    state.completed = true;
+                    document.getElementById(`nav-btn-${letter}`).classList.add('completed');
+                    handleCharacterCompletion();
+                }
+            } else {
+                playSound('incorrect');
+                showErrorBanner();
+            }
+        }
+
+        function showErrorBanner() {
+            const banner = document.getElementById('error-banner');
+            banner.style.display = 'block';
+            setTimeout(() => { banner.style.display = 'none'; }, 1800);
+        }
+
+        function handleCharacterCompletion() {
+            let letter = String.fromCharCode(currentLetterCode);
+            const overlay = document.getElementById('celebration-overlay');
+            const celebrationText = document.getElementById('celebration-text');
+            
+            if (currentLetterCode < 90) {
+                celebrationText.innerText = `Hurray! Completed letter ${letter}! Moving to next... 🌟`;
+            } else {
+                celebrationText.innerText = `🎉 AMAZING! You completed all letters from A to Z! 🏆`;
+            }
+            
+            overlay.style.display = 'flex';
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                if (currentLetterCode < 90) {
+                    selectLetter(currentLetterCode + 1);
+                }
+            }, 2300);
+        }
+
+        selectLetter(65);
+    </script>
+</body>
+</html>
